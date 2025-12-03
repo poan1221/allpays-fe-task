@@ -24,12 +24,8 @@ export type DashboardFilter = {
 };
 
 // 거래 리스트
-export async function fetchPayments(
-  filter: DashboardFilter
-): Promise<PaymentDto[]> {
-  const { data } = await api.get<ApiResponse<PaymentDto[]>>("/payments/list", {
-    params: filter,
-  });
+export async function fetchPayments(): Promise<PaymentDto[]> {
+  const { data } = await api.get<ApiResponse<PaymentDto[]>>("/payments/list");
   return data.data;
 }
 
