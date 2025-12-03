@@ -15,6 +15,7 @@ import {
 } from "@/dashboard/aggregations";
 import { FilterBar } from "@/dashboard/components/FilterBar";
 import { SummaryCards } from "@/dashboard/components/SummaryCards";
+import { PaymentListTable } from "@/components/common/PaymentListTable";
 
 export default function DashboardPage() {
   const [filter, setFilter] = useState<DashboardFilter>({
@@ -106,7 +107,15 @@ export default function DashboardPage() {
             상위 가맹점 테이블 영역
           </div>
           <div className="lg:col-span-2 rounded-xl border bg-white p-4 shadow-sm">
-            결제 리스트 테이블 영역
+            <PaymentListTable
+              payments={filteredPayments}
+              merchants={merchantsQuery.data ?? []}
+              statusCodes={statusCodesQuery.data ?? []}
+              typeCodes={typeCodesQuery.data ?? []}
+              maxRows={10}
+              title="최근 거래 내역"
+              subtitle="최신 거래 순으로 10개까지 노출됩니다"
+            />
           </div>
         </section>
       </main>
