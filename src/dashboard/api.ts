@@ -58,7 +58,7 @@ export async function fetchPaymentStatusCodes(): Promise<CodeItem[]> {
 
 export async function fetchPaymentTypeCodes(): Promise<PaymentTypeItem[]> {
   const { data } = await api.get<ApiResponse<PaymentTypeItem[]>>(
-    "/common/payment-type/all"
+    "/common/paymemt-type/all"
   );
   return data.data;
 }
