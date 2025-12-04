@@ -9,6 +9,9 @@
 ```
 npm install
 npm run dev
+
+// .env 파일로 아래 환경변수 설정 필요
+// VITE_API_BASE_URL = "https://recruit.paysbypays.com/api/v1"
 ```
 
 ### 사용 버전
