@@ -1,7 +1,7 @@
 import type { DashboardFilter } from "@/types/dashboard";
 import type { CodeItem, PaymentTypeItem, MerchantDto } from "@/types/payment";
 import { Button } from "@/components/ui/button";
-import { MerchantCombobox } from "@/dashboard/components/MerchantComboBox";
+import { MerchantCombobox } from "@/features/dashboard/components/MerchantComboBox";
 import { LabeledSelect } from "@/components/common/LabeledSelect";
 import dayjs from "dayjs";
 

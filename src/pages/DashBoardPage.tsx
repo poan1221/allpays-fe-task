@@ -1,21 +1,12 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import dayjs from "dayjs";
-import {
-  fetchPayments,
-  fetchMerchants,
-  fetchPaymentStatusCodes,
-  fetchPaymentTypeCodes,
-  type DashboardFilter,
-} from "@/dashboard/api";
-import {
-  normalizePayments,
-  calcSummary,
-  applyFilter,
-} from "@/dashboard/aggregations";
-import { FilterBar } from "@/dashboard/components/FilterBar";
-import { SummaryCards } from "@/dashboard/components/SummaryCards";
+import { type DashboardFilter } from "@/features/payments/api/payment-api";
+import { FilterBar } from "@/components/common/FilterBar";
+import { SummaryCards } from "@/features/dashboard/components/SummaryCards";
 import { PaymentListTable } from "@/components/common/PaymentListTable";
+import { usePaymentData } from "@/features/payments/hooks/usePaymentData";
+import { Link } from "react-router-dom";
+import { CircleChevronRight } from "lucide-react";
 
 export default function DashboardPage() {
   const [filter, setFilter] = useState<DashboardFilter>({
@@ -23,43 +14,14 @@ export default function DashboardPage() {
     toDate: dayjs().format("YYYY-MM-DD"),
   });
 
-  const paymentsQuery = useQuery({
-    queryKey: ["payments"],
-    queryFn: () => fetchPayments(),
-  });
-
-  const merchantsQuery = useQuery({
-    queryKey: ["merchants"],
-    queryFn: () => fetchMerchants(),
-  });
-
-  const statusCodesQuery = useQuery({
-    queryKey: ["payment-status-codes"],
-    queryFn: () => fetchPaymentStatusCodes(),
-  });
-
-  const typeCodesQuery = useQuery({
-    queryKey: ["payment-type-codes"],
-    queryFn: () => fetchPaymentTypeCodes(),
-  });
-
-  const isLoading = paymentsQuery.isLoading || merchantsQuery.isLoading;
-
-  const payments = useMemo(() => {
-    const raw = paymentsQuery.data ?? [];
-    return normalizePayments(raw);
-  }, [paymentsQuery.data]);
-
-  const filteredPayments = useMemo(
-    () => applyFilter(payments, filter),
-    [payments, filter]
-  );
-
-  const summary = useMemo(
-    () => calcSummary(filteredPayments),
-    [filteredPayments]
-  );
-  const merchants = merchantsQuery.data ?? [];
+  const {
+    filteredPayments,
+    merchants,
+    statusCodes,
+    typeCodes,
+    summary,
+    isLoading,
+  } = usePaymentData(filter);
 
   if (isLoading) {
     return <div className="p-6 text-sm text-slate-500">로딩중...</div>;
@@ -79,8 +41,8 @@ export default function DashboardPage() {
           filter={filter}
           onChange={setFilter}
           merchants={merchants}
-          statusCodes={statusCodesQuery.data ?? []}
-          typeCodes={typeCodesQuery.data ?? []}
+          statusCodes={statusCodes}
+          typeCodes={typeCodes}
         />
 
         {/* KPI 카드 */}
@@ -107,15 +69,33 @@ export default function DashboardPage() {
             상위 가맹점 테이블 영역
           </div>
           <div className="lg:col-span-2 rounded-xl border bg-white p-4 shadow-sm">
-            <PaymentListTable
-              payments={filteredPayments}
-              merchants={merchantsQuery.data ?? []}
-              statusCodes={statusCodesQuery.data ?? []}
-              typeCodes={typeCodesQuery.data ?? []}
-              maxRows={10}
-              title="최근 거래 내역"
-              subtitle="최신 거래 순으로 10개까지 노출됩니다"
-            />
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-md font-medium text-slate-900 flex gap-1 items-center">
+                    최근 거래 내역
+                    <Link to="/payment-list">
+                      <CircleChevronRight size={18} />
+                    </Link>
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    최신 거래 순으로 10개까지 노출됩니다
+                  </p>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  총<span className="font-semibold text-slate-700">10</span>건
+                </p>
+              </div>
+              <PaymentListTable
+                payments={filteredPayments}
+                merchants={merchants}
+                statusCodes={statusCodes}
+                typeCodes={typeCodes}
+                maxRows={10}
+                title="최근 거래 내역"
+                subtitle="최신 거래 순으로 10개까지 노출됩니다"
+              />
+            </div>
           </div>
         </section>
       </main>

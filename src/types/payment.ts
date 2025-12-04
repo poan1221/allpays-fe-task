@@ -25,6 +25,13 @@ export type MerchantDto = {
   bizType: string;
 };
 
+export type Merchant = {
+  mchtCode: string;
+  mchtName: string;
+  status: string;
+  bizType: string;
+};
+
 export type MerchantDetailDto = MerchantDto & {
   bizNo: string;
   address: string;
